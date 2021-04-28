@@ -43,28 +43,38 @@ app.get("/info", (req, res) => {
   res.send(`Phonebook has info for ${lenOfPhonebook} \n${date}`);
 });
 
-app.post("/api/persons", async (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
+
+  if (!body.name || !body.number) {
+    return res.status(400).json({
+      error: "name or number is missing",
+    });
+  }
 
   const person = new Person({
     name: body.name,
     number: body.number,
   });
 
-  try {
-    const newPerson = await person.save();
-    //201 means object successfully saved
-    res.status(201).json(newPerson);
-  } catch (err) {
-    res.status(400).json({
-      error: err.message,
-    });
-  }
+  person
+    .save()
+    .then((savedPerson) => res.json(savedPerson.toJSON()))
+    .catch((err) => next(err));
+});
+
+app.put("/api/persons/:id", (req, res, next) => {
+  const { name, number } = req.body;
+  Person.findByIdAndUpdate(req.params.id, { name, number }, { new: true })
+    .then((updatedPerson) => {
+      res.json(updatedPerson);
+    })
+    .catch((err) => next(err));
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
-    .then((result) => {
+    .then(() => {
       //status 204 no content
       res.status(204).end();
     })
