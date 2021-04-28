@@ -38,9 +38,10 @@ app.get("/api/persons/:id", (req, res, next) => {
 });
 
 app.get("/info", (req, res) => {
-  const lenOfPhonebook = persons.length;
-  const date = new Date().toUTCString();
-  res.send(`Phonebook has info for ${lenOfPhonebook} \n${date}`);
+  Person.find({}).then(person => {
+    const content = `Phonebook has <b>${person.length} people</b> as of ${new Date().toUTCString()}`
+    res.send(content)
+  })
 });
 
 app.post("/api/persons", (req, res, next) => {
