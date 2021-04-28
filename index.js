@@ -11,7 +11,7 @@ const Person = require("./models/personModel");
 
 morgan.token("body", (req, res) => JSON.stringify(req.body));
 
-// app.use(express.static("build"));
+app.use(express.static("build"));
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
@@ -37,10 +37,12 @@ app.get("/api/persons/:id", (req, res, next) => {
 });
 
 app.get("/info", (req, res) => {
-  Person.find({}).then(person => {
-    const content = `Phonebook has <b>${person.length} people</b> as of ${new Date().toUTCString()}`
-    res.send(content)
-  })
+  Person.find({}).then((person) => {
+    const content = `Phonebook has <b>${
+      person.length
+    } people</b> as of ${new Date().toUTCString()}`;
+    res.send(content);
+  });
 });
 
 app.post("/api/persons", (req, res, next) => {
@@ -86,9 +88,8 @@ const errorHandler = (err, req, res, next) => {
 
   if (err.message === "CastError") {
     return res.status(400).send({ error: "Malformatted id" });
-  }
-  else if (err.message === "ValidationError") {
-    return res.status(400).json({ error: err.message })
+  } else if (err.message === "ValidationError") {
+    return res.status(400).json({ error: err.message });
   }
 
   next(err);
