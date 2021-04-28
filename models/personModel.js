@@ -1,7 +1,8 @@
-require('dotenv').config()
+require("dotenv").config();
 
 const mongoose = require("mongoose");
-const url = process.env.MONGODB_URI
+const uniqueValidator = require("mongoose-unique-validator");
+const url = process.env.MONGODB_URI;
 
 mongoose.connect(url, {
   useNewUrlParser: true,
@@ -28,21 +29,21 @@ const personSchema = new mongoose.Schema({
     required: true,
   },
   number: {
-      type: String,
-      //minlength: 8,
-      unique: true,
-      required: true,
-  }
+    type: String,
+    //minlength: 8,
+    unique: true,
+    required: true,
+  },
 });
 
-personSchema.set('toJSON', {
-    transform: (document, returnedObj) => {
-        returnedObj.id = returnedObj._id.toString()
-        delete returnedObj._id
-        delete returnedObj.__v
-    }
-})
+personSchema.plugin(uniqueValidator);
+
+personSchema.set("toJSON", {
+  transform: (document, returnedObj) => {
+    returnedObj.id = returnedObj._id.toString();
+    delete returnedObj._id;
+    delete returnedObj.__v;
+  },
+});
 
 module.exports = mongoose.model("Person", personSchema);
-
-
