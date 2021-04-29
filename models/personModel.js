@@ -1,8 +1,8 @@
-require("dotenv").config();
-
+const config = require("../utils/config");
+const logger = require("../utils/logger");
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
-const url = process.env.MONGODB_URI;
+const url = config.MONGODB_URI
 
 mongoose.connect(url, {
   useNewUrlParser: true,
@@ -14,11 +14,11 @@ mongoose.connect(url, {
 const db = mongoose.connection;
 
 db.once("on", () => {
-  console.log("DB connected:", db_url);
+  logger.info("DB connected:", db_url);
 });
 
 db.on("error", (err) => {
-  console.log("connection error:", err);
+  logger.error("connection error:", err);
 });
 
 const personSchema = new mongoose.Schema({
