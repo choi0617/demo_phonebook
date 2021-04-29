@@ -86,9 +86,9 @@ app.delete("/api/persons/:id", (req, res, next) => {
 const errorHandler = (err, req, res, next) => {
   console.log(err.message);
 
-  if (err.message === "CastError") {
+  if (err.name === "CastError") {
     return res.status(400).send({ error: "Malformatted id" });
-  } else if (err.message === "ValidationError") {
+  } else if (err.name === "ValidationError") {
     return res.status(400).json({ error: err.message });
   }
 
